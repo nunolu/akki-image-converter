@@ -1,0 +1,85 @@
+<Window x:Class="Akki.ImageConverter.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="using:Akki.ImageConverter"
+ Title="Akki Image Converter">
+ <Grid x:Name="Root" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" DragOver="OnDragOver" Drop="OnDrop">
+  <Grid.RowDefinitions><RowDefinition Height="48"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Grid x:Name="TitleArea" Margin="20,0,160,0">
+   <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+    <Image Source="Assets/AppLogo.png" Width="28" Height="28" AutomationProperties.Name="Akki Image Converter logo" />
+    <TextBlock Text="Akki Image Converter" FontWeight="SemiBold" VerticalAlignment="Center" />
+    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4" Padding="7,2"><TextBlock Text="PREVIEW" FontSize="10" /></Border>
+   </StackPanel>
+  </Grid>
+  <Grid Grid.Row="1" Margin="24,12,24,16" ColumnSpacing="8">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel x:Name="ImportControls" Orientation="Horizontal" Spacing="8">
+    <Button Click="AddImages" Style="{StaticResource AccentButtonStyle}"><StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE710;" FontSize="14"/><TextBlock Text="Add images"/></StackPanel></Button>
+    <Button Click="AddFolder"><StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE8B7;" FontSize="14"/><TextBlock Text="Add folder"/></StackPanel></Button>
+    <CheckBox x:Name="RecursiveBox" Content="Include subfolders" Margin="8,0,0,0"/>
+    <Button Click="ClearQueue" Content="Clear"/>
+   </StackPanel>
+   <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+    <ToggleButton x:Name="PinButton" Click="TogglePin" ToolTipService.ToolTip="Keep this window above other apps" AutomationProperties.Name="Always on top"><StackPanel Orientation="Horizontal" Spacing="6"><FontIcon Glyph="&#xE718;" FontSize="14"/><TextBlock Text="Always on top"/></StackPanel></ToggleButton>
+    <Button Click="ShowSettings" ToolTipService.ToolTip="Settings" AutomationProperties.Name="Settings"><FontIcon Glyph="&#xE713;" FontSize="16"/></Button>
+    <Button Click="ShowAbout" ToolTipService.ToolTip="About Akki Image Converter" AutomationProperties.Name="About"><FontIcon Glyph="&#xE946;" FontSize="16"/></Button>
+   </StackPanel>
+  </Grid>
+  <Grid Grid.Row="2" Margin="24,0,24,0" ColumnSpacing="16">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="340"/><ColumnDefinition Width="370"/></Grid.ColumnDefinitions>
+   <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="18">
+    <Grid RowSpacing="14">
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Grid><TextBlock Text="Images" FontSize="22" FontWeight="SemiBold"/><TextBlock x:Name="QueueCount" Text="0 files" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/></Grid>
+     <Border Grid.Row="1" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}" Background="{ThemeResource SubtleFillColorSecondaryBrush}" Padding="20">
+      <StackPanel HorizontalAlignment="Center" Spacing="6"><FontIcon Glyph="&#xE8B7;" FontSize="28" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/><TextBlock Text="Drop images or folders here" FontSize="17"/><TextBlock Text="PNG · JPEG · WebP · AVIF · TIFF · BMP · ICO · GIF" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/></StackPanel>
+     </Border>
+     <ListView x:Name="QueueList" Grid.Row="2" SelectionMode="Single" HorizontalContentAlignment="Stretch">
+      <ListView.ItemTemplate><DataTemplate x:DataType="local:QueueItem">
+       <Grid Padding="0,9" ColumnSpacing="12">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <FontIcon Glyph="&#xEB9F;" FontSize="24" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+        <StackPanel Grid.Column="1" Spacing="4"><TextBlock Text="{x:Bind Name}" FontWeight="SemiBold"/><TextBlock Text="{x:Bind Detail}" FontSize="11" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/><TextBlock Text="{x:Bind Status, Mode=OneWay}" FontSize="12" TextWrapping="Wrap"/></StackPanel>
+        <Button Grid.Column="2" Click="RemoveItem" Tag="{x:Bind}" VerticalAlignment="Top" ToolTipService.ToolTip="Remove image" AutomationProperties.Name="Remove image"><FontIcon Glyph="&#xE711;" FontSize="11"/></Button>
+       </Grid>
+      </DataTemplate></ListView.ItemTemplate>
+     </ListView>
+     <Grid Grid.Row="3"><Button x:Name="PreviewButton" Click="ShowPreview" Content="Compare selected image"/></Grid>
+    </Grid>
+   </Border>
+   <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+     <StackPanel x:Name="SettingsPanel" Padding="20" Spacing="12">
+      <TextBlock Text="Conversion settings" FontSize="22" FontWeight="SemiBold"/>
+      <ComboBox x:Name="FormatBox" Header="Output format" HorizontalAlignment="Stretch" SelectionChanged="FormatChanged"/>
+      <CheckBox x:Name="LosslessBox" Content="Lossless compression" Checked="CompressionChanged" Unchecked="CompressionChanged"/>
+      <Grid x:Name="QualityPanel"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="72"/></Grid.ColumnDefinitions><Slider x:Name="QualitySlider" Header="Quality" Minimum="0" Maximum="100" Value="80" StepFrequency="1" Margin="0,0,12,0"/><TextBlock Grid.Column="1" Text="{x:Bind QualitySlider.Value, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/></Grid>
+      <TextBlock x:Name="FormatHint" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+      <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,3"/>
+      <TextBlock Text="Resize" Style="{StaticResource SectionHeading}"/>
+      <ComboBox x:Name="ResizeBox" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="ResizeChanged"><ComboBoxItem Content="Keep original size"/><ComboBoxItem Content="By percentage"/><ComboBoxItem Content="Fixed pixel dimensions"/></ComboBox>
+      <NumberBox x:Name="PercentBox" Header="Scale (%)" Value="50" Minimum="0.1" Maximum="1000" SpinButtonPlacementMode="Compact" Visibility="Collapsed"/>
+      <Grid x:Name="DimensionsPanel" Visibility="Collapsed" ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><NumberBox x:Name="WidthBox" Header="Width (px)" Value="1920" Minimum="1" Maximum="32768"/><NumberBox x:Name="HeightBox" Grid.Column="1" Header="Height (px)" Value="1080" Minimum="1" Maximum="32768"/></Grid>
+      <CheckBox x:Name="AspectBox" Content="Keep aspect ratio (fit within bounds)" IsChecked="True"/>
+      <CheckBox x:Name="UpscaleBox" Content="Don't upscale" IsChecked="True"/>
+      <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,3"/>
+      <TextBlock Text="Output" Style="{StaticResource SectionHeading}"/>
+      <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="OutputBox" Header="Save to" PlaceholderText="Choose a folder"/><Button Grid.Column="1" Click="ChooseOutput" VerticalAlignment="Bottom" AutomationProperties.Name="Browse output folder"><FontIcon Glyph="&#xE8B7;" FontSize="16"/></Button></Grid>
+      <CheckBox x:Name="StructureBox" Content="Keep imported folder structure" IsChecked="True"/>
+      <CheckBox x:Name="MetadataBox" Content="Remove EXIF / location metadata" IsChecked="True"/>
+      <TextBox x:Name="BackgroundBox" Header="Transparency background (#RRGGBB)" Text="#FFFFFF" Visibility="Collapsed"/>
+      <TextBlock Text="Existing files are renamed automatically. Originals are always kept." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+     </StackPanel>
+    </ScrollViewer>
+   </Border>
+  </Grid>
+  <InfoBar x:Name="Notice" Grid.Row="3" Margin="24,12,24,0" IsOpen="False" IsClosable="True"/>
+  <Grid Grid.Row="4" Margin="24,16,24,20" ColumnSpacing="16">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel VerticalAlignment="Center" Spacing="5"><TextBlock x:Name="StatusText" Text="Add images to get started" FontWeight="SemiBold"/><ProgressBar x:Name="Progress" Minimum="0" Maximum="100" Value="0" Visibility="Collapsed"/><TextBlock Text="Your images stay on this PC." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/></StackPanel>
+   <Button x:Name="CancelButton" Grid.Column="1" Content="Cancel" Click="CancelConversion" Visibility="Collapsed" VerticalAlignment="Center"/>
+   <Button x:Name="ConvertButton" Grid.Column="2" Click="ConvertImages" Content="Convert images" Style="{StaticResource AccentButtonStyle}" Padding="26,12" VerticalAlignment="Center" IsEnabled="False"/>
+  </Grid>
+ </Grid>
+</Window>

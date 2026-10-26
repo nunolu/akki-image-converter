@@ -1,0 +1,12 @@
+.buildtools/
+.packages/
+.vs/
+**/bin/
+**/obj/
+artifacts/
+*.user
+*.pfx
+*.p12
+*.key
+.env
+.env.*
