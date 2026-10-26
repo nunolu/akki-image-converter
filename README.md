@@ -5,6 +5,21 @@
 
 Convert batches of images locally, control quality and dimensions, and keep your originals. Built with C# and WinUI 3 for **Windows 11 x64**.
 
+## Screenshots
+
+Actual screenshots of version 0.1.3. Choose Light, Dark, or follow Windows in Settings.
+
+| Light mode | Dark mode |
+| --- | --- |
+| ![Akki Image Converter main window in Light mode](docs/screenshots/main-light.png) | ![Akki Image Converter main window in Dark mode](docs/screenshots/main-dark.png) |
+
+<details>
+<summary>About dialog and app artwork</summary>
+
+![About Akki Image Converter, showing the app artwork, version and akki.lu website](docs/screenshots/about.png)
+
+</details>
+
 ## Download and install
 
 Download **`lu.akki.ImageConverter-win-Setup.exe`** from the [Releases page](https://github.com/nunolu/akki-image-converter/releases). The installer includes the required runtimes, adds Desktop and Start-menu shortcuts, and provides an uninstaller. No separate codec installation is needed.
