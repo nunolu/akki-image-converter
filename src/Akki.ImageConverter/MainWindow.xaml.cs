@@ -504,7 +504,8 @@ public sealed partial class MainWindow : Window
 
     private async void ShowSettings(object sender, RoutedEventArgs e)
     {
-        var panel = new StackPanel { Spacing = 14, Width = 460, Padding = new Thickness(0, 0, 16, 0) };
+        // Fit the viewport and reserve space for WinUI's overlay scrollbar.
+        var panel = new StackPanel { Spacing = 14, MaxWidth = 460, Margin = new Thickness(0, 0, 24, 0) };
         panel.Children.Add(new TextBlock { Text = "Appearance", FontSize = 18, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
         var theme = new ComboBox
         {
@@ -533,7 +534,8 @@ public sealed partial class MainWindow : Window
         var check = new Button { Content = "Check for updates" };
         var install = new Button { Content = "Download update", Visibility = _updateAvailable && !_updates.HasDownload ? Visibility.Visible : Visibility.Collapsed };
         var restart = new Button { Content = "Update and restart", Visibility = _updates.HasDownload ? Visibility.Visible : Visibility.Collapsed, IsEnabled = _conversion is null };
-        var notes = new TextBlock { Text = _updates.ReleaseNotes ?? "", TextWrapping = TextWrapping.Wrap, MaxHeight = 160 };
+        // Let the outer Settings ScrollViewer measure the full release notes.
+        var notes = new TextBlock { Text = _updates.ReleaseNotes ?? "", TextWrapping = TextWrapping.Wrap };
         var downloadProgress = new ProgressBar { Minimum = 0, Maximum = 100, Visibility = Visibility.Collapsed };
         policy.SelectionChanged += (_, _) =>
         {
@@ -562,7 +564,14 @@ public sealed partial class MainWindow : Window
         panel.Children.Add(check); panel.Children.Add(install); panel.Children.Add(downloadProgress); panel.Children.Add(restart);
         panel.Children.Add(status); panel.Children.Add(notes);
         panel.Children.Add(new TextBlock { Text = "Checks run on launch and every 6 hours while the app is open. Updates never interrupt conversion.", TextWrapping = TextWrapping.Wrap, FontSize = 12 });
-        await Dialog(new ContentDialog { Title = "Settings", Content = new ScrollViewer { Content = panel }, CloseButtonText = "Close" });
+        var scroll = new ScrollViewer
+        {
+            Content = panel,
+            HorizontalScrollMode = ScrollMode.Disabled,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        await Dialog(new ContentDialog { Title = "Settings", Content = scroll, CloseButtonText = "Close" });
     }
 
     private void OnClosing(AppWindow sender, AppWindowClosingEventArgs args)

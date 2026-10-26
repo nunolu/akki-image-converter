@@ -1,4 +1,4 @@
-param([string]$Version = '0.1.6', [string]$ReleaseNotes = '', [string]$OutputDirectory = 'artifacts\releases')
+param([string]$Version = '0.1.7', [string]$ReleaseNotes = '', [string]$OutputDirectory = 'artifacts\releases')
 $ErrorActionPreference = 'Stop'
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a numeric major.minor.patch version.' }
 $taskRoot = Split-Path $PSScriptRoot -Parent
