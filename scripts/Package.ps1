@@ -1,4 +1,4 @@
-param([string]$Version = '0.1.3', [string]$ReleaseNotes = '')
+param([string]$Version = '0.1.6', [string]$ReleaseNotes = '', [string]$OutputDirectory = 'artifacts\releases')
 $ErrorActionPreference = 'Stop'
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a numeric major.minor.patch version.' }
 $taskRoot = Split-Path $PSScriptRoot -Parent
@@ -9,7 +9,7 @@ try {
     $env:DOTNET_NOLOGO = '1'
     $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
     $taskPublish = Join-Path $taskRoot "artifacts\publish-$Version"
-    $taskReleases = Join-Path $taskRoot 'artifacts\releases'
+    $taskReleases = Join-Path $taskRoot $OutputDirectory
     dotnet tool restore
     if ($LASTEXITCODE) { throw 'Installer tool restore failed.' }
     dotnet publish src/Akki.ImageConverter/Akki.ImageConverter.csproj -c Release -r win-x64 -p:Platform=x64 -p:Version=$Version --self-contained -o $taskPublish
@@ -57,5 +57,5 @@ try {
         }
     } finally { $taskArchive.Dispose() }
     Write-Host "Installer and update feed: $taskReleases"
-    Write-Host 'This is an unsigned development release. Nothing has been uploaded.'
+    Write-Host 'This build is unsigned. Nothing has been uploaded.'
 } finally { Pop-Location }

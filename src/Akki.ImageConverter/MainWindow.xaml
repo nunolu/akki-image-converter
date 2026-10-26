@@ -9,7 +9,6 @@
    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
     <Image Source="Assets/AppLogo.png" Width="28" Height="28" AutomationProperties.Name="Akki Image Converter logo" />
     <TextBlock Text="Akki Image Converter" FontWeight="SemiBold" VerticalAlignment="Center" />
-    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4" Padding="7,2"><TextBlock Text="PREVIEW" FontSize="10" /></Border>
    </StackPanel>
   </Grid>
   <Grid Grid.Row="1" Margin="24,12,24,16" ColumnSpacing="8">

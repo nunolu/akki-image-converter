@@ -12,6 +12,14 @@ void Check(bool condition, string name)
 }
 try
 {
+    var legacyPreferences = System.Text.Json.JsonSerializer.Deserialize<Preferences>("""
+        {"Theme":2,"Updates":2,"ShareUsageStatistics":true,"StatisticsInstallationId":"old-id","StatisticsLastRunVersion":"0.1.5"}
+        """)!;
+    Check(legacyPreferences.Theme == AppTheme.Dark && legacyPreferences.Updates == UpdatePolicy.Manual,
+        "Previous settings preserve theme and update preference");
+    var savedPreferences = System.Text.Json.JsonSerializer.Serialize(legacyPreferences);
+    Check(!savedPreferences.Contains("Statistics", StringComparison.OrdinalIgnoreCase) && !savedPreferences.Contains("old-id"),
+        "Saving previous settings discards retired analytics fields and installation ID");
     var input = Path.Combine(root, "input");
     var output = Path.Combine(root, "output");
     Directory.CreateDirectory(Path.Combine(input, "nested"));

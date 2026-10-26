@@ -6,7 +6,7 @@ Use a version higher than existing packages:
 
 ```powershell
 .\scripts\Build.ps1 -Configuration Release
-.\scripts\Package.ps1 -Version 0.1.3 -ReleaseNotes .\docs\release-notes-0.1.3.md
+.\scripts\Package.ps1 -Version 0.1.6 -ReleaseNotes .\docs\release-notes-0.1.6.md
 .\scripts\CreateSourceBundle.ps1
 ```
 

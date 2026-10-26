@@ -24,7 +24,7 @@ Actual screenshots of version 0.1.3. Choose Light, Dark, or follow Windows in Se
 
 Download **`lu.akki.ImageConverter-win-Setup.exe`** from the [Releases page](https://github.com/nunolu/akki-image-converter/releases). The installer includes the required runtimes, adds Desktop and Start-menu shortcuts, and provides an uninstaller. No separate codec installation is needed.
 
-A portable ZIP is available on the same release page. Extract it completely and run `Akki.ImageConverter.exe`; installed-app updates are not available in portable mode. These initial preview releases are unsigned.
+A portable ZIP is available on the same release page. Extract it completely and run `Akki.ImageConverter.exe`; installed-app updates are not available in portable mode. The installer is currently unsigned.
 
 ## Features
 
@@ -39,9 +39,10 @@ A portable ZIP is available on the same release page. Extract it completely and 
 - Keep originals; automatically rename existing output filenames.
 - See progress, output sizes and individual errors; cancel a batch.
 - Choose **Light**, **Dark** or **Use Windows settings**.
+- Read third-party licences and notices inside the app.
 - Choose automatic update notifications, automatic download/install on exit, or manual checks.
 
-**Images stay on your PC.** Conversion does not upload them. Update checks and downloads contact the configured update server according to your preferences.
+**Images stay on your PC.** Conversion does not upload them. Update checks and downloads contact the configured update server according to your preferences. The app does not collect usage statistics or analytics.
 
 ## Supported formats and limits
 
@@ -49,7 +50,7 @@ A portable ZIP is available on the same release page. Extract it completely and 
 | --- | --- |
 | PNG, JPG/JPEG, WebP, AVIF, TIF/TIFF, BMP, ICO, still GIF | WebP, JPEG, PNG, AVIF, TIFF, BMP, ICO |
 
-The app lists only output encoders available in the bundled library. Animated images and multipage TIFFs are explicitly rejected rather than silently losing frames/pages. ICO input uses its primary image; ICO output is a single image up to 256 × 256. HEIC, RAW, PDF and SVG are not exposed by this preview.
+The app lists only output encoders available in the bundled library. Animated images and multipage TIFFs are explicitly rejected rather than silently losing frames/pages. ICO input uses its primary image; ICO output is a single image up to 256 × 256. HEIC, RAW, PDF and SVG are not supported by this release.
 
 Batches process one file at a time. Cancellation takes effect between native encoder operations and before committing output. Recursive import skips unreadable folders and directory junctions. Folder paths are relative to each imported root; overlapping output filenames are renamed automatically.
 
@@ -72,12 +73,12 @@ cd akki-image-converter
 
 Or open `Akki.ImageConverter.sln` in Visual Studio, select **x64**, set `Akki.ImageConverter` as the startup project, and press F5.
 
-The build script restores dependencies, builds and runs 29 real-image integration checks covering output formats, lossless pixels, transparency, resizing, safe filenames, source preservation, animation rejection, preview and cancellation. Its CLI home and NuGet cache stay in ignored workspace folders.
+The build script restores dependencies, builds and runs real-image integration checks covering output formats, lossless pixels, transparency, resizing, safe filenames, source preservation, animation rejection, preview and cancellation. Its CLI home and NuGet cache stay in ignored workspace folders.
 
 ## Create a release
 
 ```powershell
-.\scripts\Package.ps1 -Version 0.1.3 -ReleaseNotes .\docs\release-notes-0.1.3.md
+.\scripts\Package.ps1 -Version 0.1.6 -ReleaseNotes .\docs\release-notes-0.1.6.md
 .\scripts\CreateSourceBundle.ps1
 ```
 

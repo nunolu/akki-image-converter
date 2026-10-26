@@ -70,7 +70,11 @@ public sealed partial class MainWindow : Window
         AppWindow.Closing += OnClosing;
         Closed += (_, _) => _updateTimer.Stop();
         _updateTimer.Tick += async (_, _) => await CheckAutomatically();
-        Root.Loaded += async (_, _) => { _updateTimer.Start(); await CheckAutomatically(); };
+        Root.Loaded += async (_, _) =>
+        {
+            _updateTimer.Start();
+            await CheckAutomatically();
+        };
     }
 
     private void Tell(string message, InfoBarSeverity severity = InfoBarSeverity.Informational)
@@ -393,6 +397,8 @@ public sealed partial class MainWindow : Window
 
     private async void ShowAbout(object sender, RoutedEventArgs e)
     {
+        bool showLicences = false;
+        var about = new ContentDialog { Title = "Akki Image Converter", CloseButtonText = "Close" };
         var panel = new StackPanel { Spacing = 12 };
         panel.Children.Add(new Image
         {
@@ -404,10 +410,89 @@ public sealed partial class MainWindow : Window
         panel.Children.Add(new HyperlinkButton { Content = "Visit akki.lu", NavigateUri = new Uri("https://akki.lu") });
         panel.Children.Add(new TextBlock { Text = "Batch conversion, made simple. Your images are processed locally.", TextWrapping = TextWrapping.Wrap });
         var licenses = new Button { Content = "Third-party licences" };
-        licenses.Click += async (_, _) => await Launcher.LaunchFileAsync(await StorageFile.GetFileFromPathAsync(Path.Combine(AppContext.BaseDirectory, "THIRD-PARTY-NOTICES.md")));
+        licenses.Click += (_, _) => { showLicences = true; about.Hide(); };
         panel.Children.Add(licenses);
-        await Dialog(new ContentDialog { Title = "Akki Image Converter", Content = panel, CloseButtonText = "Close" });
+        about.Content = panel;
+        await Dialog(about);
+        if (showLicences) await ShowLicences();
     }
+
+    private async Task ShowLicences()
+    {
+        var documents = new List<LicenceDocument>
+        {
+            new("Third-party software overview", Path.Combine(AppContext.BaseDirectory, "THIRD-PARTY-NOTICES.md")),
+            new("Akki Image Converter — MIT licence", Path.Combine(AppContext.BaseDirectory, "LICENSE"))
+        };
+        var directory = Path.Combine(AppContext.BaseDirectory, "licenses");
+        if (Directory.Exists(directory))
+        {
+            documents.AddRange(Directory.EnumerateFiles(directory, "*.txt")
+                .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
+                .Select(path => new LicenceDocument(LicenceTitle(Path.GetFileNameWithoutExtension(path)), path)));
+        }
+        var panel = new Grid { Width = 680, RowSpacing = 12 };
+        panel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        panel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Select a document to read its full licence. All documents are included with the app and available offline.",
+            TextWrapping = TextWrapping.Wrap
+        });
+        var selector = new ComboBox
+        {
+            Header = "Licence document", ItemsSource = documents.Select(document => document.Name).ToArray(),
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        };
+        var text = new TextBox
+        {
+            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap,
+            FontSize = 13, MinHeight = 260, MaxHeight = 420, HorizontalAlignment = HorizontalAlignment.Stretch
+        };
+        ScrollViewer.SetVerticalScrollBarVisibility(text, ScrollBarVisibility.Auto);
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(text, "Licence text");
+        // The selection can change while a file is loading. Only display the latest selection.
+        int selectionVersion = 0;
+        selector.SelectionChanged += async (_, _) =>
+        {
+            var requestVersion = ++selectionVersion;
+            if (selector.SelectedIndex < 0) return;
+            var document = documents[selector.SelectedIndex];
+            text.Text = "Loading…";
+            try
+            {
+                var content = await File.ReadAllTextAsync(document.Path);
+                if (requestVersion == selectionVersion) text.Text = content;
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                if (requestVersion == selectionVersion) text.Text = "Couldn't load this licence: " + error.Message;
+            }
+        };
+        Grid.SetRow(selector, 1);
+        Grid.SetRow(text, 2);
+        panel.Children.Add(selector);
+        panel.Children.Add(text);
+        selector.SelectedIndex = 0;
+        await Dialog(new ContentDialog
+        {
+            Title = "Third-party licences", Content = panel, CloseButtonText = "Close"
+        });
+    }
+
+    private sealed record LicenceDocument(string Name, string Path);
+
+    private static string LicenceTitle(string name) => name switch
+    {
+        "Magick.NET-15.0.0-NOTICE" => "Magick.NET and image codecs — full notices",
+        "Magick.NET-Apache-2.0" => "Magick.NET — Apache License 2.0",
+        "Velopack-MIT" => "Velopack — MIT licence",
+        "WindowsAppSDK-MIT" => "Windows App SDK — upstream MIT licence",
+        "dotnet-runtime-10.0.14-LICENSE" => ".NET runtime — licence",
+        "dotnet-runtime-10.0.14-NOTICES" => ".NET runtime — third-party notices",
+        _ => name.Replace('_', ' ')
+    };
 
     private async Task CheckAutomatically()
     {
@@ -419,7 +504,7 @@ public sealed partial class MainWindow : Window
 
     private async void ShowSettings(object sender, RoutedEventArgs e)
     {
-        var panel = new StackPanel { Spacing = 14, Width = 460 };
+        var panel = new StackPanel { Spacing = 14, Width = 460, Padding = new Thickness(0, 0, 16, 0) };
         panel.Children.Add(new TextBlock { Text = "Appearance", FontSize = 18, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
         var theme = new ComboBox
         {
