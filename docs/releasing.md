@@ -1,5 +1,8 @@
 # Release and update hosting
 
+For the initial update.akki.lu deployment, use the [server handoff](server-handoff.md)
+with exact paths, download filenames and acceptance checks.
+
 ## Build
 
 Use a version higher than existing packages:
