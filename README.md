@@ -93,7 +93,7 @@ Original application code is **MIT licensed**, copyright © 2026 **akki.lu (nuno
 
 Third-party components retain their own licences, including Microsoft runtime terms and LGPL/MPL-covered native components. Full texts are in [third-party/licenses](third-party/licenses), with a detailed [dependency audit and native rebuild information](docs/dependencies.md). Native corresponding sources accompany binary releases as a separate asset.
 
-The app artwork was generated for this project. Its master, exported icon and [generation details](docs/artwork.md) are included.
+The application icon and artwork are included in the source tree.
 
 ## Contributing
 

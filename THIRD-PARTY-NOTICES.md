@@ -33,7 +33,5 @@ components are separate and remain governed by their own included terms.
 
 This software uses the FreeType library. Copyright © The FreeType Project.
 
-Application artwork was generated for this project using OpenAI image generation;
-its source master and generation prompt are included in the repository. The
-application's MIT licence also applies to that project artwork to the extent
+The application's MIT licence also applies to the project artwork to the extent
 licensable; no third-party library logos are included.
