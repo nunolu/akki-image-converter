@@ -44,6 +44,8 @@ A portable ZIP is available on the same release page. Extract it completely and 
 
 **Images stay on your PC.** Conversion does not upload them. Update checks and downloads contact the configured update server according to your preferences. The app does not collect usage statistics or analytics.
 
+See the [privacy policy](PRIVACY.md). The Microsoft Store edition uses Store-managed updates and excludes the standalone updater; see [Store build instructions](docs/store-build.md).
+
 ## Supported formats and limits
 
 | Input | Output |

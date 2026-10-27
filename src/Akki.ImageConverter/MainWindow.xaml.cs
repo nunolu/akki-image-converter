@@ -72,6 +72,7 @@ public sealed partial class MainWindow : Window
         _updateTimer.Tick += async (_, _) => await CheckAutomatically();
         Root.Loaded += async (_, _) =>
         {
+            if (_updates.IsStoreBuild) return;
             _updateTimer.Start();
             await CheckAutomatically();
         };
@@ -525,45 +526,67 @@ public sealed partial class MainWindow : Window
         panel.Children.Add(new Border { Height = 1, Background = new SolidColorBrush(Microsoft.UI.Colors.Gray), Opacity = .25, Margin = new Thickness(0, 6, 0, 6) });
         panel.Children.Add(new TextBlock { Text = "Updates", FontSize = 18, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
         panel.Children.Add(new TextBlock { Text = $"Installed version: {_updates.Version}" });
-        var policy = new ComboBox { Header = "Update preference", HorizontalAlignment = HorizontalAlignment.Stretch,
-            ItemsSource = new[] { "Notify me automatically", "Download and install automatically on exit", "Manual checks only" }, SelectedIndex = (int)_preferences.Updates };
-        panel.Children.Add(policy);
-        var status = new TextBlock { Text = _updates.Status, TextWrapping = TextWrapping.Wrap };
-        var lastCheck = new TextBlock { Text = _preferences.LastUpdateCheck is { } last ? $"Last checked: {last.LocalDateTime:g}" : "Last checked: never", FontSize = 12 };
-        panel.Children.Add(lastCheck);
-        var check = new Button { Content = "Check for updates" };
-        var install = new Button { Content = "Download update", Visibility = _updateAvailable && !_updates.HasDownload ? Visibility.Visible : Visibility.Collapsed };
-        var restart = new Button { Content = "Update and restart", Visibility = _updates.HasDownload ? Visibility.Visible : Visibility.Collapsed, IsEnabled = _conversion is null };
-        // Let the outer Settings ScrollViewer measure the full release notes.
-        var notes = new TextBlock { Text = _updates.ReleaseNotes ?? "", TextWrapping = TextWrapping.Wrap };
-        var downloadProgress = new ProgressBar { Minimum = 0, Maximum = 100, Visibility = Visibility.Collapsed };
-        policy.SelectionChanged += (_, _) =>
+        if (_updates.IsStoreBuild)
         {
-            _preferences.Updates = (UpdatePolicy)policy.SelectedIndex;
-            try { _preferences.Save(); } catch (Exception error) { status.Text = "Couldn't save preference: " + error.Message; }
-        };
-        check.Click += async (_, _) =>
+            panel.Children.Add(new TextBlock
+            {
+                Text = "Updates are managed by Microsoft Store. You can check for updates and choose automatic updates in the Store app.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            var store = new Button { Content = "Open Microsoft Store updates" };
+            store.Click += async (_, _) =>
+            {
+                try
+                {
+                    if (!await Launcher.LaunchUriAsync(new Uri("ms-windows-store://downloadsandupdates")))
+                        Tell("Open Microsoft Store and check Downloads for updates.", InfoBarSeverity.Warning);
+                }
+                catch (Exception error) { Tell("Couldn't open Microsoft Store: " + error.Message, InfoBarSeverity.Warning); }
+            };
+            panel.Children.Add(store);
+        }
+        else
         {
-            check.IsEnabled = false; status.Text = "Checking for updates…";
-            _updateAvailable = await _updates.CheckAsync(_preferences, false);
-            status.Text = _updates.Status; notes.Text = _updates.ReleaseNotes ?? "";
-            lastCheck.Text = _preferences.LastUpdateCheck is { } last ? $"Last checked: {last.LocalDateTime:g}" : "Last checked: never";
-            install.Visibility = _updateAvailable && !_updates.HasDownload ? Visibility.Visible : Visibility.Collapsed;
-            check.IsEnabled = true;
-        };
-        install.Click += async (_, _) =>
-        {
-            install.IsEnabled = check.IsEnabled = false; status.Text = "Downloading update…";
-            downloadProgress.Visibility = Visibility.Visible;
-            await _updates.CheckAsync(_preferences, true, p => DispatcherQueue.TryEnqueue(() => downloadProgress.Value = p));
-            status.Text = _updates.Status;
-            restart.Visibility = _updates.HasDownload ? Visibility.Visible : Visibility.Collapsed;
-            install.IsEnabled = check.IsEnabled = true;
-        };
-        restart.Click += (_, _) => { if (_conversion is null) { SavePreferences(); _updates.Restart(); } };
-        panel.Children.Add(check); panel.Children.Add(install); panel.Children.Add(downloadProgress); panel.Children.Add(restart);
-        panel.Children.Add(status); panel.Children.Add(notes);
-        panel.Children.Add(new TextBlock { Text = "Checks run on launch and every 6 hours while the app is open. Updates never interrupt conversion.", TextWrapping = TextWrapping.Wrap, FontSize = 12 });
+            var policy = new ComboBox { Header = "Update preference", HorizontalAlignment = HorizontalAlignment.Stretch,
+                ItemsSource = new[] { "Notify me automatically", "Download and install automatically on exit", "Manual checks only" }, SelectedIndex = (int)_preferences.Updates };
+            panel.Children.Add(policy);
+            var status = new TextBlock { Text = _updates.Status, TextWrapping = TextWrapping.Wrap };
+            var lastCheck = new TextBlock { Text = _preferences.LastUpdateCheck is { } last ? $"Last checked: {last.LocalDateTime:g}" : "Last checked: never", FontSize = 12 };
+            panel.Children.Add(lastCheck);
+            var check = new Button { Content = "Check for updates" };
+            var install = new Button { Content = "Download update", Visibility = _updateAvailable && !_updates.HasDownload ? Visibility.Visible : Visibility.Collapsed };
+            var restart = new Button { Content = "Update and restart", Visibility = _updates.HasDownload ? Visibility.Visible : Visibility.Collapsed, IsEnabled = _conversion is null };
+            // Let the outer Settings ScrollViewer measure the full release notes.
+            var notes = new TextBlock { Text = _updates.ReleaseNotes ?? "", TextWrapping = TextWrapping.Wrap };
+            var downloadProgress = new ProgressBar { Minimum = 0, Maximum = 100, Visibility = Visibility.Collapsed };
+            policy.SelectionChanged += (_, _) =>
+            {
+                _preferences.Updates = (UpdatePolicy)policy.SelectedIndex;
+                try { _preferences.Save(); } catch (Exception error) { status.Text = "Couldn't save preference: " + error.Message; }
+            };
+            check.Click += async (_, _) =>
+            {
+                check.IsEnabled = false; status.Text = "Checking for updates…";
+                _updateAvailable = await _updates.CheckAsync(_preferences, false);
+                status.Text = _updates.Status; notes.Text = _updates.ReleaseNotes ?? "";
+                lastCheck.Text = _preferences.LastUpdateCheck is { } last ? $"Last checked: {last.LocalDateTime:g}" : "Last checked: never";
+                install.Visibility = _updateAvailable && !_updates.HasDownload ? Visibility.Visible : Visibility.Collapsed;
+                check.IsEnabled = true;
+            };
+            install.Click += async (_, _) =>
+            {
+                install.IsEnabled = check.IsEnabled = false; status.Text = "Downloading update…";
+                downloadProgress.Visibility = Visibility.Visible;
+                await _updates.CheckAsync(_preferences, true, p => DispatcherQueue.TryEnqueue(() => downloadProgress.Value = p));
+                status.Text = _updates.Status;
+                restart.Visibility = _updates.HasDownload ? Visibility.Visible : Visibility.Collapsed;
+                install.IsEnabled = check.IsEnabled = true;
+            };
+            restart.Click += (_, _) => { if (_conversion is null) { SavePreferences(); _updates.Restart(); } };
+            panel.Children.Add(check); panel.Children.Add(install); panel.Children.Add(downloadProgress); panel.Children.Add(restart);
+            panel.Children.Add(status); panel.Children.Add(notes);
+            panel.Children.Add(new TextBlock { Text = "Checks run on launch and every 6 hours while the app is open. Updates never interrupt conversion.", TextWrapping = TextWrapping.Wrap, FontSize = 12 });
+        }
         var scroll = new ScrollViewer
         {
             Content = panel,

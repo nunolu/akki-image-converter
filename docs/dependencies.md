@@ -21,7 +21,7 @@ Third-party libraries are covered by their own terms, not the app's MIT licence.
 | ImageMagick | 7.1.2-33 | ImageMagick licence |
 | Windows App SDK / WinUI | 1.8.260921001 package | MIT upstream source; distributed NuGet runtime files also carry Microsoft Windows App SDK licence terms |
 | .NET runtime | 10.0.14 | MIT plus runtime third-party notices |
-| Velopack | 1.2.161 | MIT |
+| Velopack (direct-download edition only) | 1.2.161 | MIT |
 | WebView2 SDK loader (transitive) | 1.0.3179.45 | Included Microsoft BSD-style licence and NOTICE; no WebView is used by this app |
 | Windows SDK / BuildTools | 10.0.26100.4654 package | Microsoft SDK/tool terms; used for building, not licensed as original app code |
 | Visual Studio Community | Build-time tool | Microsoft's Community licence, subject to eligibility; not shipped with this app |

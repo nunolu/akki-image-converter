@@ -17,10 +17,26 @@
     <AssemblyName>Akki.ImageConverter</AssemblyName>
     <ApplicationIcon>Assets\App.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(DistributionChannel)' == 'Store'">
+    <DefineConstants>$(DefineConstants);STORE_BUILD</DefineConstants>
+    <NuGetLockFilePath>packages.store.lock.json</NuGetLockFilePath>
+    <WindowsPackageType>MSIX</WindowsPackageType>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxBundle>Never</AppxBundle>
+    <AppxSymbolPackageEnabled>false</AppxSymbolPackageEnabled>
+    <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+    <StoreManifestPath Condition="'$(StoreManifestPath)' == ''">$(MSBuildProjectDirectory)\..\..\packaging\store\AppxManifest.xml</StoreManifestPath>
+    <AppxPackageDir>$(MSBuildProjectDirectory)\..\..\artifacts\store\single-project\</AppxPackageDir>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(DistributionChannel)' == 'Store'">
+    <AppxManifest Include="$(StoreManifestPath)" Link="Package.appxmanifest" />
+    <Content Include="..\..\packaging\store\Assets\*.png" Link="Assets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
-    <PackageReference Include="Velopack" Version="1.2.161" />
+    <PackageReference Include="Velopack" Version="1.2.161" Condition="'$(DistributionChannel)' != 'Store'" />
     <ProjectReference Include="..\Akki.ImageConverter.Core\Akki.ImageConverter.Core.csproj" />
     <Content Include="Assets\App.ico" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\AppLogo.png" CopyToOutputDirectory="PreserveNewest" />
@@ -32,7 +48,7 @@
   </ItemGroup>
   <!-- The unpackaged WinUI build generates this PRI in TargetDir, but dotnet
        publish does not automatically include it. It contains App/MainWindow XBF. -->
-  <Target Name="PublishAppResources" AfterTargets="ComputeFilesToPublish">
+  <Target Name="PublishAppResources" AfterTargets="ComputeFilesToPublish" Condition="'$(DistributionChannel)' != 'Store'">
     <Error Condition="!Exists('$(TargetDir)$(AssemblyName).pri')" Text="The compiled WinUI resource index is missing." />
     <ItemGroup>
       <ResolvedFileToPublish Include="$(TargetDir)$(AssemblyName).pri">
