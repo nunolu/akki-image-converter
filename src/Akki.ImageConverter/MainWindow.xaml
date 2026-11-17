@@ -57,6 +57,8 @@
       <TextBlock x:Name="FormatHint" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
       <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,3"/>
       <TextBlock Text="Resize" Style="{StaticResource SectionHeading}"/>
+      <ComboBox x:Name="RotationBox" Header="Rotate clockwise" HorizontalAlignment="Stretch" SelectedIndex="0"><ComboBoxItem Content="No rotation"/><ComboBoxItem Content="90°"/><ComboBoxItem Content="180°"/><ComboBoxItem Content="270°"/></ComboBox>
+      <TextBlock Text="Rotation is applied before resizing to every image in the batch." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
       <ComboBox x:Name="ResizeBox" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="ResizeChanged"><ComboBoxItem Content="Keep original size"/><ComboBoxItem Content="By percentage"/><ComboBoxItem Content="Fixed pixel dimensions"/></ComboBox>
       <NumberBox x:Name="PercentBox" Header="Scale (%)" Value="50" Minimum="0.1" Maximum="1000" SpinButtonPlacementMode="Compact" Visibility="Collapsed"/>
       <Grid x:Name="DimensionsPanel" Visibility="Collapsed" ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><NumberBox x:Name="WidthBox" Header="Width (px)" Value="1920" Minimum="1" Maximum="32768"/><NumberBox x:Name="HeightBox" Grid.Column="1" Header="Height (px)" Value="1080" Minimum="1" Maximum="32768"/></Grid>

@@ -2,6 +2,7 @@ namespace Akki.ImageConverter.Core;
 
 public enum OutputKind { WebP, Jpeg, Png, Avif, Tiff, Bmp, Ico }
 public enum ResizeKind { Original, Percent, Pixels }
+public enum RotationKind { None, Clockwise90, Clockwise180, Clockwise270 }
 
 public sealed record ConversionOptions
 {
@@ -9,6 +10,7 @@ public sealed record ConversionOptions
     public uint Quality { get; init; } = 80;
     public bool Lossless { get; init; }
     public ResizeKind Resize { get; init; }
+    public RotationKind Rotation { get; init; }
     public double Percent { get; init; } = 50;
     public uint Width { get; init; } = 1920;
     public uint Height { get; init; } = 1080;
@@ -21,6 +23,7 @@ public sealed record ConversionOptions
 
     public void Validate()
     {
+        if (!Enum.IsDefined(Rotation)) throw new ArgumentException("Choose a valid rotation.");
         if (Quality > 100) throw new ArgumentException("Quality must be between 0 and 100.");
         if (Resize == ResizeKind.Percent && (!double.IsFinite(Percent) || Percent <= 0 || Percent > 1000))
             throw new ArgumentException("Resize percentage must be between 0.1 and 1000.");

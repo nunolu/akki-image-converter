@@ -33,6 +33,7 @@ A portable ZIP is available on the same release page. Extract it completely and 
 - Export **WebP, JPEG, PNG, AVIF, TIFF, BMP or ICO**.
 - Adjust quality or use lossless compression for supported formats.
 - Resize by percentage or pixel dimensions, preserve proportions and avoid upscaling.
+- Rotate images clockwise by 90, 180 or 270 degrees before resizing.
 - Compare an original image with its actual encoded result before converting.
 - Preserve transparency where supported; choose a background for JPEG/BMP.
 - Optionally remove EXIF/location metadata and preserve imported folder structure.
@@ -80,7 +81,7 @@ The build script restores dependencies, builds and runs real-image integration c
 ## Create a release
 
 ```powershell
-.\scripts\Package.ps1 -Version 0.1.7 -ReleaseNotes .\docs\release-notes-0.1.7.md
+.\scripts\Package.ps1 -Version 1.1.0 -ReleaseNotes .\docs\release-notes-1.1.0.md
 .\scripts\CreateSourceBundle.ps1
 ```
 

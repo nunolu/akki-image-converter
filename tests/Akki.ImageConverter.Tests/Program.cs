@@ -38,6 +38,24 @@ try
     Check(Engine.CalculateSize(400, 200, options with { Resize = ResizeKind.Pixels, Width = 800, Height = 800 }) == (400u, 200u), "Prevent upscaling");
     Check(Engine.CalculateSize(400, 200, options with { Resize = ResizeKind.Pixels, Width = 80, Height = 90, KeepAspectRatio = false }) == (80u, 90u), "Exact dimensions");
     var before = File.ReadAllBytes(source);
+    foreach (var rotation in new[] { RotationKind.Clockwise90, RotationKind.Clockwise180, RotationKind.Clockwise270 })
+    {
+        var rotatedOptions = options with { Format = OutputKind.Png, Rotation = rotation };
+        var rotated = engine.Convert(src, rotatedOptions, CancellationToken.None);
+        using var actual = new MagickImage(rotated.Path);
+        using var expected = new MagickImage(source);
+        expected.Rotate((int)rotation * 90);
+        Check(actual.Width == expected.Width && actual.Height == expected.Height &&
+            actual.Compare(expected, ErrorMetric.Absolute) == 0, $"{rotation} conversion pixels");
+        var rotatedPreview = engine.Preview(source, rotatedOptions);
+        using var previewImage = new MagickImage(rotatedPreview.Converted);
+        actual.Resize(700, 440);
+        Check(rotatedPreview.Width == rotated.Width && rotatedPreview.Height == rotated.Height &&
+            previewImage.Compare(actual, ErrorMetric.MeanAbsolute) < 0.01, $"{rotation} preview matches conversion");
+    }
+    var rotatedResized = engine.Convert(src, options with { Format = OutputKind.Png, Rotation = RotationKind.Clockwise90,
+        Resize = ResizeKind.Pixels, Width = 100, Height = 100 }, CancellationToken.None);
+    Check(rotatedResized.Width == 50 && rotatedResized.Height == 100, "Rotation precedes resizing");
     foreach (var format in Engine.SupportedOutputs)
     {
         var result = engine.Convert(src, options with { Format = format }, CancellationToken.None);

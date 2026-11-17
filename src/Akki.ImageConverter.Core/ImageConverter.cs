@@ -46,6 +46,8 @@ public sealed class ImageConverter
 
     private static void Prepare(MagickImage image, ConversionOptions options)
     {
+        if (options.Rotation != RotationKind.None)
+            image.Rotate((int)options.Rotation * 90);
         var size = CalculateSize(image.Width, image.Height, options);
         if (size != (image.Width, image.Height))
             image.Resize(new MagickGeometry(size.Width, size.Height) { IgnoreAspectRatio = true });

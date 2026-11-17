@@ -54,6 +54,7 @@ public sealed partial class MainWindow : Window
         QualitySlider.Value = settings.Quality;
         LosslessBox.IsChecked = settings.Lossless;
         ResizeBox.SelectedIndex = (int)settings.Resize;
+        RotationBox.SelectedIndex = Enum.IsDefined(settings.Rotation) ? (int)settings.Rotation : 0;
         PercentBox.Value = settings.Percent;
         WidthBox.Value = settings.Width;
         HeightBox.Value = settings.Height;
@@ -117,6 +118,7 @@ public sealed partial class MainWindow : Window
             Quality = (uint)QualitySlider.Value,
             Lossless = LosslessBox.IsChecked == true,
             Resize = (ResizeKind)ResizeBox.SelectedIndex,
+            Rotation = (RotationKind)RotationBox.SelectedIndex,
             Percent = PercentBox.Value,
             Width = checked((uint)WidthBox.Value), Height = checked((uint)HeightBox.Value),
             KeepAspectRatio = AspectBox.IsChecked == true, PreventUpscale = UpscaleBox.IsChecked == true,

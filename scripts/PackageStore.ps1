@@ -1,4 +1,4 @@
-param([string]$Version = '1.0.0', [string]$OutputDirectory = 'artifacts/store')
+param([string]$Version = '1.1.0', [string]$OutputDirectory = 'artifacts/store')
 $ErrorActionPreference = 'Stop'
 if ($Version -notmatch '^[1-9]\d*\.\d+\.\d+$' -or @($Version.Split('.') | Where-Object { [int]$_ -gt 65535 }).Count) {
     throw 'Store version must be major.minor.patch, with major at least 1 and components at most 65535.'
