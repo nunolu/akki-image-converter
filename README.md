@@ -1,4 +1,4 @@
-<p align="center"><img src="src/Akki.ImageConverter/Assets/AppLogo.png" width="112" alt="Akki Image Converter logo"></p>
+<p align="center"><img src="docs/images/icon-1.1.0.png" width="112" alt="Akki Image Converter logo"></p>
 <h1 align="center">Akki Image Converter</h1>
 <p align="center">A native Windows image converter, made by <a href="https://akki.lu">akki.lu</a>.</p>
 <p align="center"><a href="https://github.com/nunolu/akki-image-converter/releases">Download for Windows</a> · <a href="https://github.com/nunolu/akki-image-converter/issues">Report an issue</a> · <a href="LICENSE">MIT licence</a></p>
@@ -7,14 +7,14 @@ Convert batches of images locally, control quality and dimensions, and keep your
 
 ## Screenshots
 
-Actual screenshots of version 0.1.3. Choose Light, Dark, or follow Windows in Settings.
+Screenshots from version 0.1.3 are shown below; the icon and conversion settings were updated in 1.1.0. Choose Light, Dark, or follow Windows in Settings.
 
 | Light mode | Dark mode |
 | --- | --- |
 | ![Akki Image Converter main window in Light mode](docs/screenshots/main-light.png) | ![Akki Image Converter main window in Dark mode](docs/screenshots/main-dark.png) |
 
 <details>
-<summary>About dialog and app artwork</summary>
+<summary>About dialog in version 0.1.3</summary>
 
 ![About Akki Image Converter, showing the app artwork, version and akki.lu website](docs/screenshots/about.png)
 
