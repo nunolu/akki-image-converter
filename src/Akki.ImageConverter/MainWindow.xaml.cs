@@ -55,6 +55,8 @@ public sealed partial class MainWindow : Window
         LosslessBox.IsChecked = settings.Lossless;
         ResizeBox.SelectedIndex = (int)settings.Resize;
         RotationBox.SelectedIndex = Enum.IsDefined(settings.Rotation) ? (int)settings.Rotation : 0;
+        FlipHorizontalBox.IsChecked = settings.FlipHorizontal;
+        FlipVerticalBox.IsChecked = settings.FlipVertical;
         PercentBox.Value = settings.Percent;
         WidthBox.Value = settings.Width;
         HeightBox.Value = settings.Height;
@@ -119,6 +121,7 @@ public sealed partial class MainWindow : Window
             Lossless = LosslessBox.IsChecked == true,
             Resize = (ResizeKind)ResizeBox.SelectedIndex,
             Rotation = (RotationKind)RotationBox.SelectedIndex,
+            FlipHorizontal = FlipHorizontalBox.IsChecked == true, FlipVertical = FlipVerticalBox.IsChecked == true,
             Percent = PercentBox.Value,
             Width = checked((uint)WidthBox.Value), Height = checked((uint)HeightBox.Value),
             KeepAspectRatio = AspectBox.IsChecked == true, PreventUpscale = UpscaleBox.IsChecked == true,
@@ -401,7 +404,7 @@ public sealed partial class MainWindow : Window
     private async void ShowAbout(object sender, RoutedEventArgs e)
     {
         bool showLicences = false;
-        var about = new ContentDialog { Title = "Akki Image Converter", CloseButtonText = "Close" };
+        var about = new ContentDialog { Title = "Akki Image Tools", CloseButtonText = "Close" };
         var panel = new StackPanel { Spacing = 12 };
         panel.Children.Add(new Image
         {

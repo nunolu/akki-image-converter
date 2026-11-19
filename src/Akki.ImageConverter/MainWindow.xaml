@@ -2,13 +2,13 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:local="using:Akki.ImageConverter"
- Title="Akki Image Converter">
+ Title="Akki Image Tools">
  <Grid x:Name="Root" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" DragOver="OnDragOver" Drop="OnDrop">
   <Grid.RowDefinitions><RowDefinition Height="48"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <Grid x:Name="TitleArea" Margin="20,0,160,0">
    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-    <Image Source="Assets/AppLogo.png" Width="28" Height="28" AutomationProperties.Name="Akki Image Converter logo" />
-    <TextBlock Text="Akki Image Converter" FontWeight="SemiBold" VerticalAlignment="Center" />
+    <Image Source="Assets/AppLogo.png" Width="28" Height="28" AutomationProperties.Name="Akki Image Tools logo" />
+    <TextBlock Text="Akki Image Tools" FontWeight="SemiBold" VerticalAlignment="Center" />
    </StackPanel>
   </Grid>
   <Grid Grid.Row="1" Margin="24,12,24,16" ColumnSpacing="8">
@@ -22,7 +22,7 @@
    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
     <ToggleButton x:Name="PinButton" Click="TogglePin" ToolTipService.ToolTip="Keep this window above other apps" AutomationProperties.Name="Always on top"><StackPanel Orientation="Horizontal" Spacing="6"><FontIcon Glyph="&#xE718;" FontSize="14"/><TextBlock Text="Always on top"/></StackPanel></ToggleButton>
     <Button Click="ShowSettings" ToolTipService.ToolTip="Settings" AutomationProperties.Name="Settings"><FontIcon Glyph="&#xE713;" FontSize="16"/></Button>
-    <Button Click="ShowAbout" ToolTipService.ToolTip="About Akki Image Converter" AutomationProperties.Name="About"><FontIcon Glyph="&#xE946;" FontSize="16"/></Button>
+    <Button Click="ShowAbout" ToolTipService.ToolTip="About Akki Image Tools" AutomationProperties.Name="About"><FontIcon Glyph="&#xE946;" FontSize="16"/></Button>
    </StackPanel>
   </Grid>
   <Grid Grid.Row="2" Margin="24,0,24,0" ColumnSpacing="16">
@@ -56,9 +56,11 @@
       <Grid x:Name="QualityPanel"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="72"/></Grid.ColumnDefinitions><Slider x:Name="QualitySlider" Header="Quality" Minimum="0" Maximum="100" Value="80" StepFrequency="1" Margin="0,0,12,0"/><TextBlock Grid.Column="1" Text="{x:Bind QualitySlider.Value, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/></Grid>
       <TextBlock x:Name="FormatHint" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
       <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,3"/>
-      <TextBlock Text="Resize" Style="{StaticResource SectionHeading}"/>
+      <TextBlock Text="Transform and resize" Style="{StaticResource SectionHeading}"/>
       <ComboBox x:Name="RotationBox" Header="Rotate clockwise" HorizontalAlignment="Stretch" SelectedIndex="0"><ComboBoxItem Content="No rotation"/><ComboBoxItem Content="90°"/><ComboBoxItem Content="180°"/><ComboBoxItem Content="270°"/></ComboBox>
-      <TextBlock Text="Rotation is applied before resizing to every image in the batch." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+      <CheckBox x:Name="FlipHorizontalBox" Content="Flip horizontally"/>
+      <CheckBox x:Name="FlipVerticalBox" Content="Flip vertically"/>
+      <TextBlock Text="Rotation and flips are applied in that order, before resizing, to every image in the batch." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
       <ComboBox x:Name="ResizeBox" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="ResizeChanged"><ComboBoxItem Content="Keep original size"/><ComboBoxItem Content="By percentage"/><ComboBoxItem Content="Fixed pixel dimensions"/></ComboBox>
       <NumberBox x:Name="PercentBox" Header="Scale (%)" Value="50" Minimum="0.1" Maximum="1000" SpinButtonPlacementMode="Compact" Visibility="Collapsed"/>
       <Grid x:Name="DimensionsPanel" Visibility="Collapsed" ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><NumberBox x:Name="WidthBox" Header="Width (px)" Value="1920" Minimum="1" Maximum="32768"/><NumberBox x:Name="HeightBox" Grid.Column="1" Header="Height (px)" Value="1080" Minimum="1" Maximum="32768"/></Grid>

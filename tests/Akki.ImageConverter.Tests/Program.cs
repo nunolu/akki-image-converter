@@ -26,7 +26,7 @@ try
     var source = Path.Combine(input, "nested", "transparent.png");
     using (var image = new MagickImage(MagickColors.Transparent, 400, 200))
     {
-        using var overlay = new MagickImage(MagickColors.Red, 200, 200);
+        using var overlay = new MagickImage(MagickColors.Red, 200, 100);
         image.Composite(overlay, 0, 0, CompositeOperator.Over);
         image.Write(source);
     }
@@ -56,6 +56,33 @@ try
     var rotatedResized = engine.Convert(src, options with { Format = OutputKind.Png, Rotation = RotationKind.Clockwise90,
         Resize = ResizeKind.Pixels, Width = 100, Height = 100 }, CancellationToken.None);
     Check(rotatedResized.Width == 50 && rotatedResized.Height == 100, "Rotation precedes resizing");
+    foreach (var (horizontal, vertical) in new[] { (true, false), (false, true), (true, true) })
+    {
+        var flipOptions = options with { Format = OutputKind.Png, FlipHorizontal = horizontal, FlipVertical = vertical };
+        var flipped = engine.Convert(src, flipOptions, CancellationToken.None);
+        using var actual = new MagickImage(flipped.Path);
+        using var expected = new MagickImage(source);
+        if (horizontal) expected.Flop();
+        if (vertical) expected.Flip();
+        Check(actual.Compare(expected, ErrorMetric.Absolute) == 0, $"Flip horizontal={horizontal}, vertical={vertical}");
+        var flipPreview = engine.Preview(source, flipOptions);
+        using var previewImage = new MagickImage(flipPreview.Converted);
+        actual.Resize(700, 440);
+        Check(previewImage.Compare(actual, ErrorMetric.MeanAbsolute) < 0.01, $"Flip preview horizontal={horizontal}, vertical={vertical}");
+    }
+    var combinedOptions = options with { Format = OutputKind.Png, Rotation = RotationKind.Clockwise90, FlipHorizontal = true };
+    var combined = engine.Convert(src, combinedOptions, CancellationToken.None);
+    using (var actual = new MagickImage(combined.Path))
+    using (var expected = new MagickImage(source))
+    {
+        expected.Rotate(90);
+        expected.Flop();
+        Check(actual.Compare(expected, ErrorMetric.Absolute) == 0, "Rotation precedes horizontal flip");
+    }
+    var oldOptions = System.Text.Json.JsonSerializer.Deserialize<ConversionOptions>("{}");
+    Check(oldOptions is { FlipHorizontal: false, FlipVertical: false }, "Existing preferences default to no flips");
+    var restoredOptions = System.Text.Json.JsonSerializer.Deserialize<ConversionOptions>(System.Text.Json.JsonSerializer.Serialize(combinedOptions));
+    Check(restoredOptions is { FlipHorizontal: true, FlipVertical: false }, "Flip preference persists");
     foreach (var format in Engine.SupportedOutputs)
     {
         var result = engine.Convert(src, options with { Format = format }, CancellationToken.None);

@@ -1,13 +1,13 @@
-<p align="center"><img src="docs/images/icon-1.1.0.png" width="112" alt="Akki Image Converter logo"></p>
-<h1 align="center">Akki Image Converter</h1>
-<p align="center">A native Windows image converter, made by <a href="https://akki.lu">akki.lu</a>.</p>
+<p align="center"><img src="docs/images/icon-1.1.0.png" width="112" alt="Akki Image Tools logo"></p>
+<h1 align="center">Akki Image Tools</h1>
+<p align="center">Native Windows image tools, made by <a href="https://akki.lu">akki.lu</a>.</p>
 <p align="center"><a href="https://github.com/nunolu/akki-image-converter/releases">Download for Windows</a> · <a href="https://github.com/nunolu/akki-image-converter/issues">Report an issue</a> · <a href="LICENSE">MIT licence</a></p>
 
-Convert batches of images locally, control quality and dimensions, and keep your originals. Built with C# and WinUI 3 for **Windows 11 x64**.
+Previously called Akki Image Converter. Convert and transform batches of images locally, control quality and dimensions, and keep your originals. Built with C# and WinUI 3 for **Windows 11 x64**.
 
 ## Screenshots
 
-Screenshots from version 0.1.3 are shown below; the icon and conversion settings were updated in 1.1.0. Choose Light, Dark, or follow Windows in Settings.
+Screenshots from version 0.1.3 are shown below; the app name, icon and conversion settings have since changed. Choose Light, Dark, or follow Windows in Settings.
 
 | Light mode | Dark mode |
 | --- | --- |
@@ -34,6 +34,7 @@ A portable ZIP is available on the same release page. Extract it completely and 
 - Adjust quality or use lossless compression for supported formats.
 - Resize by percentage or pixel dimensions, preserve proportions and avoid upscaling.
 - Rotate images clockwise by 90, 180 or 270 degrees before resizing.
+- Flip images horizontally or vertically, including in batch conversions and previews.
 - Compare an original image with its actual encoded result before converting.
 - Preserve transparency where supported; choose a background for JPEG/BMP.
 - Optionally remove EXIF/location metadata and preserve imported folder structure.
@@ -81,7 +82,7 @@ The build script restores dependencies, builds and runs real-image integration c
 ## Create a release
 
 ```powershell
-.\scripts\Package.ps1 -Version 1.1.0 -ReleaseNotes .\docs\release-notes-1.1.0.md
+.\scripts\Package.ps1 -Version 1.2.0 -ReleaseNotes .\docs\release-notes-1.2.0.md
 .\scripts\CreateSourceBundle.ps1
 ```
 

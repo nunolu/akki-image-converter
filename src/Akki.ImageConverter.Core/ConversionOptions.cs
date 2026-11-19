@@ -11,6 +11,8 @@ public sealed record ConversionOptions
     public bool Lossless { get; init; }
     public ResizeKind Resize { get; init; }
     public RotationKind Rotation { get; init; }
+    public bool FlipHorizontal { get; init; }
+    public bool FlipVertical { get; init; }
     public double Percent { get; init; } = 50;
     public uint Width { get; init; } = 1920;
     public uint Height { get; init; } = 1080;

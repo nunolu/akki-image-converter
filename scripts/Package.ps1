@@ -34,7 +34,7 @@ try {
     Copy-Item -Path (Join-Path $taskRoot 'third-party\licenses\*') -Destination $taskLicenses -Force
     $taskAgreement = Join-Path $taskLicenses 'INSTALLER-LICENSES.md'
     $taskAgreementText = @(
-        '# Akki Image Converter',
+        '# Akki Image Tools',
         'Original application code is licensed under MIT. Third-party components retain their own licences.',
         'By installing, you accept the applicable Microsoft Windows App SDK runtime terms reproduced below. They apply only to those Microsoft components.',
         'Nothing here limits your rights under the MIT licence or the licences of LGPL/MPL-covered components. Full third-party notices and matching native sources accompany this release.',
@@ -43,7 +43,7 @@ try {
     ) -join "`n`n"
     Set-Content -LiteralPath $taskAgreement -Value $taskAgreementText
     $taskArguments = @('pack','--runtime','win-x64','--packId','lu.akki.ImageConverter','--packVersion',$Version,'--packDir',$taskPublish,
-        '--mainExe','Akki.ImageConverter.exe','--packTitle','Akki Image Converter','--packAuthors','akki.lu',
+        '--mainExe','Akki.ImageConverter.exe','--packTitle','Akki Image Tools','--packAuthors','akki.lu',
         '--icon',(Join-Path $taskRoot 'src\Akki.ImageConverter\Assets\App.ico'),
         '--shortcuts','Desktop,StartMenuRoot','--instLicense',$taskAgreement,'--outputDir',$taskReleases)
     if ($ReleaseNotes) { $taskArguments += @('--releaseNotes', (Resolve-Path -LiteralPath $ReleaseNotes).Path) }

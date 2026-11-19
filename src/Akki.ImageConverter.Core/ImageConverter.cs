@@ -48,6 +48,8 @@ public sealed class ImageConverter
     {
         if (options.Rotation != RotationKind.None)
             image.Rotate((int)options.Rotation * 90);
+        if (options.FlipHorizontal) image.Flop();
+        if (options.FlipVertical) image.Flip();
         var size = CalculateSize(image.Width, image.Height, options);
         if (size != (image.Width, image.Height))
             image.Resize(new MagickGeometry(size.Width, size.Height) { IgnoreAspectRatio = true });
