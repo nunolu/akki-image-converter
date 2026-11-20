@@ -1,4 +1,4 @@
-param([string]$OutputDirectory = 'artifacts\third-party-sources')
+param([string]$OutputDirectory = 'artifacts\third-party-sources', [string]$BundlePath = 'artifacts\akki-image-converter-third-party-sources.zip')
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskDestination = [IO.Path]::GetFullPath((Join-Path $taskRoot $OutputDirectory))
@@ -28,7 +28,7 @@ $taskHashes = Get-ChildItem -LiteralPath $taskDestination -Filter '*.zip' -File 
     "$((Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant())  $($_.Name)"
 }
 $taskHashes | Set-Content -LiteralPath (Join-Path $taskDestination 'SHA256SUMS.txt')
-$taskBundle = Join-Path $taskRoot 'artifacts\akki-image-converter-third-party-sources.zip'
+$taskBundle = [IO.Path]::GetFullPath((Join-Path $taskRoot $BundlePath))
 $taskTemporary = $taskBundle + ".$( [Guid]::NewGuid().ToString('N') ).tmp"
 try {
     [IO.Compression.ZipFile]::CreateFromDirectory($taskDestination, $taskTemporary, [IO.Compression.CompressionLevel]::NoCompression, $false)

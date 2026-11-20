@@ -50,9 +50,42 @@ public sealed class ImageConverter
             image.Rotate((int)options.Rotation * 90);
         if (options.FlipHorizontal) image.Flop();
         if (options.FlipVertical) image.Flip();
+        if (options.Crop != CropKind.None)
+        {
+            double ratio = options.Crop switch { CropKind.Square => 1, CropKind.Landscape => 16.0 / 9, CropKind.Portrait => 4.0 / 5, _ => 1 };
+            uint width = image.Width, height = image.Height;
+            if ((double)width / height > ratio) width = Math.Max(1u, (uint)Math.Round(height * ratio));
+            else height = Math.Max(1u, (uint)Math.Round(width / ratio));
+            image.Crop(new MagickGeometry(width, height), Gravity.Center);
+            image.ResetPage();
+        }
         var size = CalculateSize(image.Width, image.Height, options);
         if (size != (image.Width, image.Height))
             image.Resize(new MagickGeometry(size.Width, size.Height) { IgnoreAspectRatio = true });
+        if (options.WatermarkText.Length > 0 || options.WatermarkImage.Length > 0)
+        {
+            var gravity = options.WatermarkPosition switch { WatermarkPosition.BottomLeft => Gravity.Southwest, WatermarkPosition.TopRight => Gravity.Northeast, WatermarkPosition.TopLeft => Gravity.Northwest, WatermarkPosition.Center => Gravity.Center, _ => Gravity.Southeast };
+            if (options.WatermarkImage.Length > 0)
+            {
+                using var mark = LoadStill(options.WatermarkImage);
+                var maxWidth = Math.Max(1u, image.Width * options.WatermarkSize / 100);
+                var maxHeight = Math.Max(1u, image.Height * options.WatermarkSize / 100);
+                mark.Resize(new MagickGeometry(maxWidth, maxHeight));
+                mark.Alpha(AlphaAction.On);
+                mark.Evaluate(Channels.Alpha, EvaluateOperator.Multiply, options.WatermarkOpacity / 100.0);
+                image.Composite(mark, gravity, CompositeOperator.Over);
+            }
+            else
+            {
+                using var mark = new MagickImage(MagickColors.Transparent, image.Width, image.Height);
+                mark.Settings.Font = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf");
+                mark.Settings.FontPointsize = Math.Max(1, image.Width * options.WatermarkSize / 100.0 / 4);
+                mark.Settings.FillColor = MagickColors.White;
+                mark.Annotate(options.WatermarkText, gravity);
+                mark.Evaluate(Channels.Alpha, EvaluateOperator.Multiply, options.WatermarkOpacity / 100.0);
+                image.Composite(mark, CompositeOperator.Over);
+            }
+        }
         if (options.Format is OutputKind.Jpeg or OutputKind.Bmp)
         {
             image.BackgroundColor = new MagickColor(options.Background);
@@ -76,7 +109,39 @@ public sealed class ImageConverter
         image.Format = ToMagickFormat(options.Format);
     }
 
-    public ConversionResult Convert(ImageSource source, ConversionOptions options, CancellationToken cancellationToken)
+    public static string OutputName(string sourcePath, ConversionOptions options, int sequence = 1)
+    {
+        if (sequence < 1) throw new ArgumentOutOfRangeException(nameof(sequence));
+        var stem = options.FilenamePrefix + Path.GetFileNameWithoutExtension(sourcePath) + options.FilenameSuffix +
+            (options.NumberFiles ? $"-{sequence:D3}" : "");
+        if (string.IsNullOrWhiteSpace(stem) || stem.EndsWith(' ') || stem.EndsWith('.') ||
+            stem.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+            System.Text.RegularExpressions.Regex.IsMatch(stem, @"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            throw new ArgumentException("The output filename is invalid or reserved by Windows.");
+        return stem + options.Extension;
+    }
+
+    private static byte[] Encode(MagickImage image, ConversionOptions options, CancellationToken cancellationToken = default)
+    {
+        if (options.TargetKilobytes == 0) return image.ToByteArray();
+        long limit = (long)options.TargetKilobytes * 1024;
+        byte[]? best = null;
+        uint low = 1, high = 100;
+        while (low <= high)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var quality = (low + high) / 2;
+            image.Quality = quality;
+            var candidate = image.ToByteArray();
+            if (candidate.LongLength <= limit) { best = candidate; low = quality + 1; }
+            else { if (quality == 1) break; high = quality - 1; }
+        }
+        if (best is not null) return best;
+        image.Quality = 1;
+        return image.ToByteArray();
+    }
+
+    public ConversionResult Convert(ImageSource source, ConversionOptions options, CancellationToken cancellationToken, int sequence = 1)
     {
         options.Validate();
         cancellationToken.ThrowIfCancellationRequested();
@@ -84,8 +149,8 @@ public sealed class ImageConverter
         Prepare(image, options);
         if (options.Format == OutputKind.Ico && (image.Width > 256 || image.Height > 256))
             image.Resize(256, 256);
-        var directory = Path.GetFullPath(options.OutputDirectory);
-        if (options.KeepFolderStructure && source.ImportRoot is not null)
+        var directory = options.OutputToSourceFolder ? Path.GetDirectoryName(Path.GetFullPath(source.Path))! : Path.GetFullPath(options.OutputDirectory);
+        if (!options.OutputToSourceFolder && options.KeepFolderStructure && source.ImportRoot is not null)
         {
             var relative = Path.GetRelativePath(source.ImportRoot, Path.GetDirectoryName(source.Path)!);
             if (Path.IsPathRooted(relative) || relative == ".." || relative.StartsWith(".." + Path.DirectorySeparatorChar))
@@ -93,13 +158,16 @@ public sealed class ImageConverter
             directory = Path.Combine(directory, relative);
         }
         Directory.CreateDirectory(directory);
-        var stem = Path.GetFileNameWithoutExtension(source.Path);
+        var stem = Path.GetFileNameWithoutExtension(OutputName(source.Path, options, sequence));
         // Write to an exclusive temporary file, then atomically rename without overwriting anything.
         var temporary = Path.Combine(directory, $".akki-{Guid.NewGuid():N}.tmp");
         try
         {
             using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-                image.Write(stream);
+            {
+                if (options.TargetKilobytes == 0) image.Write(stream);
+                else stream.Write(Encode(image, options, cancellationToken));
+            }
             cancellationToken.ThrowIfCancellationRequested();
             for (int suffix = 0; ; suffix++)
             {
@@ -120,15 +188,13 @@ public sealed class ImageConverter
         options.Validate();
         using var image = LoadStill(path);
         using var original = image.Clone();
-        original.Resize(700, 440);
         var before = original.ToByteArray(MagickFormat.Png);
         Prepare(image, options);
         if (options.Format == OutputKind.Ico) image.Resize(256, 256);
-        var encoded = image.ToByteArray();
+        var encoded = Encode(image, options);
         using var decoded = new MagickImage(encoded);
         var width = decoded.Width;
         var height = decoded.Height;
-        decoded.Resize(700, 440);
         return (before, decoded.ToByteArray(MagickFormat.Png), encoded.LongLength, width, height);
     }
 }

@@ -32,6 +32,7 @@
   <ItemGroup Condition="'$(DistributionChannel)' == 'Store'">
     <AppxManifest Include="$(StoreManifestPath)" Link="Package.appxmanifest" />
     <Content Include="..\..\packaging\store\Assets\*.png" Link="Assets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\artifacts\explorer-native\Akki.ExplorerCommand.dll" Link="Akki.ExplorerCommand.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
@@ -44,6 +45,7 @@
     <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\third-party\licenses\*" Link="licenses\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\docs\dependencies.md" Link="DEPENDENCIES.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\release-notes-*.md" Link="changelogs\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\third-party\sources.json" Link="licenses\sources.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <!-- The unpackaged WinUI build generates this PRI in TargetDir, but dotnet

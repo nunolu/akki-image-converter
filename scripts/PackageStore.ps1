@@ -1,4 +1,4 @@
-param([string]$Version = '1.2.0', [string]$OutputDirectory = 'artifacts/store')
+param([string]$Version = '1.3.0', [string]$OutputDirectory = 'artifacts/store')
 $ErrorActionPreference = 'Stop'
 if ($Version -notmatch '^[1-9]\d*\.\d+\.\d+$' -or @($Version.Split('.') | Where-Object { [int]$_ -gt 65535 }).Count) {
     throw 'Store version must be major.minor.patch, with major at least 1 and components at most 65535.'
@@ -13,6 +13,8 @@ try {
     $env:NUGET_PACKAGES = Join-Path $taskRoot '.packages'
     $env:DOTNET_NOLOGO = '1'
     $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
+    & (Join-Path $PSScriptRoot 'BuildExplorerCommand.cmd')
+    if ($LASTEXITCODE) { throw 'Explorer component build failed.' }
     & (Join-Path $PSScriptRoot 'ExportStoreArtwork.ps1') -Destination (Join-Path $taskRoot 'packaging/store/Assets')
     [xml]$taskManifest = Get-Content 'packaging/store/AppxManifest.xml' -Raw
     $taskManifest.Package.Identity.Version = "$Version.0"
@@ -33,7 +35,7 @@ try {
     $taskArchive = [IO.Compression.ZipFile]::OpenRead($taskPackageFile)
     try {
         $taskNames = $taskArchive.Entries.FullName
-        foreach ($taskRequired in 'resources.pri','coreclr.dll','Magick.Native-Q16-x64.dll','AppxManifest.xml','LICENSE','THIRD-PARTY-NOTICES.md') {
+        foreach ($taskRequired in 'resources.pri','coreclr.dll','Magick.Native-Q16-x64.dll','Akki.ExplorerCommand.dll','AppxManifest.xml','LICENSE','THIRD-PARTY-NOTICES.md') {
             if ($taskNames -notcontains $taskRequired) { throw "Missing package component: $taskRequired" }
         }
         if ($taskNames -match '(^|/)(Velopack\.(dll|exe)|Update\.exe)$|private-notes|private-documents') { throw 'Unexpected updater or private file in Store package.' }

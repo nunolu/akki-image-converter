@@ -2,9 +2,11 @@
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
          xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
          xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+         xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+         xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
          xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-         IgnorableNamespaces="uap uap10 rescap">
-  <Identity Name="akki.lu.AkkiImageConverter" Publisher="CN=4FD0D4C6-4C34-4C91-860A-7F1D8A63FBF2" Version="1.2.0.0" ProcessorArchitecture="x64" />
+         IgnorableNamespaces="uap uap10 rescap com desktop4">
+  <Identity Name="akki.lu.AkkiImageConverter" Publisher="CN=4FD0D4C6-4C34-4C91-860A-7F1D8A63FBF2" Version="1.3.0.0" ProcessorArchitecture="x64" />
   <Properties>
     <DisplayName>Akki Image Tools</DisplayName>
     <PublisherDisplayName>akki.lu</PublisherDisplayName>
@@ -19,6 +21,37 @@
                           BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\Square310x310Logo.png" />
       </uap:VisualElements>
+      <Extensions>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer><com:SurrogateServer AppId="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" DisplayName="Akki Image Tools">
+            <com:Class Id="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" Path="Akki.ExplorerCommand.dll" ThreadingModel="STA" />
+          </com:SurrogateServer></com:ComServer>
+        </com:Extension>
+        <desktop4:Extension Category="windows.fileExplorerContextMenus">
+          <desktop4:FileExplorerContextMenus>
+            <desktop4:ItemType Type=".png"><desktop4:Verb Id="OpenAkkiPng" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".jpg"><desktop4:Verb Id="OpenAkkiJpg" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".jpeg"><desktop4:Verb Id="OpenAkkiJpeg" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".webp"><desktop4:Verb Id="OpenAkkiWebp" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".avif"><desktop4:Verb Id="OpenAkkiAvif" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".tif"><desktop4:Verb Id="OpenAkkiTif" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".tiff"><desktop4:Verb Id="OpenAkkiTiff" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".bmp"><desktop4:Verb Id="OpenAkkiBmp" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".ico"><desktop4:Verb Id="OpenAkkiIco" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+            <desktop4:ItemType Type=".gif"><desktop4:Verb Id="OpenAkkiGif" Clsid="7EAB048A-3E61-47AC-91A9-469F93A2B8C4" /></desktop4:ItemType>
+          </desktop4:FileExplorerContextMenus>
+        </desktop4:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="akkiimages">
+            <uap:DisplayName>Akki Image Tools</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.png</uap:FileType><uap:FileType>.jpg</uap:FileType><uap:FileType>.jpeg</uap:FileType>
+              <uap:FileType>.webp</uap:FileType><uap:FileType>.avif</uap:FileType><uap:FileType>.tif</uap:FileType><uap:FileType>.tiff</uap:FileType>
+              <uap:FileType>.bmp</uap:FileType><uap:FileType>.ico</uap:FileType><uap:FileType>.gif</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities><rescap:Capability Name="runFullTrust" /></Capabilities>

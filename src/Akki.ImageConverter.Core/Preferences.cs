@@ -4,6 +4,7 @@ namespace Akki.ImageConverter.Core;
 
 public enum UpdatePolicy { Notify, Automatic, Manual }
 public enum AppTheme { System, Light, Dark }
+public enum CompactEdge { Left, Right, Top, Bottom }
 
 public sealed class Preferences
 {
@@ -15,6 +16,8 @@ public sealed class Preferences
         OutputDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Akki Converted")
     };
     public bool IncludeSubfolders { get; set; }
+    public CompactEdge CompactEdge { get; set; } = CompactEdge.Right;
+    public Dictionary<string, ConversionOptions> Presets { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public static string FilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "akki.lu", "ImageConverter", "settings.json");

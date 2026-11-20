@@ -1,11 +1,24 @@
 <p align="center"><img src="docs/images/icon-1.1.0.png" width="112" alt="Akki Image Tools logo"></p>
 <h1 align="center">Akki Image Tools</h1>
 <p align="center">Native Windows image tools, made by <a href="https://akki.lu">akki.lu</a>.</p>
-<p align="center"><a href="https://github.com/nunolu/akki-image-converter/releases">Download for Windows</a> · <a href="https://github.com/nunolu/akki-image-converter/issues">Report an issue</a> · <a href="LICENSE">MIT licence</a></p>
+<p align="center"><a href="https://github.com/nunolu/akki-image-tools/releases">Download for Windows</a> · <a href="https://github.com/nunolu/akki-image-tools/issues">Report an issue</a> · <a href="LICENSE">MIT licence</a></p>
 
 Previously called Akki Image Converter. Convert and transform batches of images locally, control quality and dimensions, and keep your originals. Built with C# and WinUI 3 for **Windows 11 x64**.
 
 ## Screenshots
+
+The following images show the **development version**. Its interface and features are not all available in the latest published release yet.
+
+![Development version showing batch conversion and image comparison](docs/screenshots/development/01-batch-workflow.png)
+
+| Editing | Output options |
+| --- | --- |
+| ![Development version showing image editing options](docs/screenshots/development/02-edit-images.png) | ![Development version showing output options](docs/screenshots/development/03-output-options.png) |
+
+![Development version showing the compact image drop window](docs/screenshots/development/04-compact-mode.png)
+
+<details>
+<summary>Earlier screenshots from version 0.1.3</summary>
 
 Screenshots from version 0.1.3 are shown below; the app name, icon and conversion settings have since changed. Choose Light, Dark, or follow Windows in Settings.
 
@@ -13,20 +26,19 @@ Screenshots from version 0.1.3 are shown below; the app name, icon and conversio
 | --- | --- |
 | ![Akki Image Converter main window in Light mode](docs/screenshots/main-light.png) | ![Akki Image Converter main window in Dark mode](docs/screenshots/main-dark.png) |
 
-<details>
-<summary>About dialog in version 0.1.3</summary>
-
 ![About Akki Image Converter, showing the app artwork, version and akki.lu website](docs/screenshots/about.png)
 
 </details>
 
 ## Download and install
 
-Download **`lu.akki.ImageConverter-win-Setup.exe`** from the [Releases page](https://github.com/nunolu/akki-image-converter/releases). The installer includes the required runtimes, adds Desktop and Start-menu shortcuts, and provides an uninstaller. No separate codec installation is needed.
+Download **`lu.akki.ImageConverter-win-Setup.exe`** from the [Releases page](https://github.com/nunolu/akki-image-tools/releases). The installer includes the required runtimes, adds Desktop and Start-menu shortcuts, and provides an uninstaller. No separate codec installation is needed.
 
 A portable ZIP is available on the same release page. Extract it completely and run `Akki.ImageConverter.exe`; installed-app updates are not available in portable mode. The installer is currently unsigned.
 
 ## Features
+
+The list below describes the development version; consult the release notes for features available in a published download.
 
 - Import multiple files or entire folders, optionally including subfolders.
 - Drag images or folders onto the window; pin it above other windows.
@@ -35,6 +47,11 @@ A portable ZIP is available on the same release page. Extract it completely and 
 - Resize by percentage or pixel dimensions, preserve proportions and avoid upscaling.
 - Rotate images clockwise by 90, 180 or 270 degrees before resizing.
 - Flip images horizontally or vertically, including in batch conversions and previews.
+- Centre-crop to square, 16:9 or 4:5 proportions before resizing.
+- Add filename prefixes, suffixes and sequence numbers to batch outputs.
+- Save and load named conversion presets.
+- Aim for a file size with lossy JPEG or WebP and see when the target cannot be met.
+- Add a text or image watermark with adjustable position, size and opacity.
 - Compare an original image with its actual encoded result before converting.
 - Preserve transparency where supported; choose a background for JPEG/BMP.
 - Optionally remove EXIF/location metadata and preserve imported folder structure.
@@ -70,8 +87,8 @@ Requirements:
 Visual Studio Community can be used if you meet Microsoft’s Community licence eligibility. The C# project restores its image-processing and UI dependencies through NuGet; you do not need to build ImageMagick yourself.
 
 ```powershell
-git clone https://github.com/nunolu/akki-image-converter.git
-cd akki-image-converter
+git clone https://github.com/nunolu/akki-image-tools.git
+cd akki-image-tools
 .\scripts\Build.ps1 -Configuration Release -Run
 ```
 

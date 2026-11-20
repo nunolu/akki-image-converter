@@ -4,6 +4,14 @@
  <Application.Resources>
   <ResourceDictionary>
    <ResourceDictionary.MergedDictionaries><XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" /></ResourceDictionary.MergedDictionaries>
+   <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="AkkiRailBrush" Color="#EAF1FC"/><SolidColorBrush x:Key="AkkiRailSelectedBrush" Color="#D8E8FF"/></ResourceDictionary>
+    <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="AkkiRailBrush" Color="#202B3D"/><SolidColorBrush x:Key="AkkiRailSelectedBrush" Color="#304C73"/></ResourceDictionary>
+    <ResourceDictionary x:Key="HighContrast"><SolidColorBrush x:Key="AkkiRailBrush" Color="{ThemeResource SystemColorWindowColor}"/><SolidColorBrush x:Key="AkkiRailSelectedBrush" Color="{ThemeResource SystemColorHighlightColor}"/></ResourceDictionary>
+   </ResourceDictionary.ThemeDictionaries>
+   <Style x:Key="AkkiRailButton" TargetType="Button"><Setter Property="Width" Value="42"/><Setter Property="Height" Value="42"/><Setter Property="MinWidth" Value="0"/><Setter Property="Padding" Value="0"/><Setter Property="CornerRadius" Value="7"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+   <Style x:Key="AkkiRailToggle" TargetType="ToggleButton"><Setter Property="Width" Value="42"/><Setter Property="Height" Value="42"/><Setter Property="MinWidth" Value="0"/><Setter Property="Padding" Value="0"/><Setter Property="CornerRadius" Value="7"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+   <Style x:Key="AkkiOptionsTab" TargetType="ToggleButton"><Setter Property="MinWidth" Value="0"/><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="Padding" Value="8,8"/><Setter Property="CornerRadius" Value="6"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/></Style>
    <Style x:Key="SectionHeading" TargetType="TextBlock">
     <Setter Property="FontWeight" Value="SemiBold" /><Setter Property="FontSize" Value="15" />
    </Style>
