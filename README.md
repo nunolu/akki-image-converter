@@ -32,6 +32,8 @@ Screenshots from version 0.1.3 are shown below; the app name, icon and conversio
 
 ## Download and install
 
+**Microsoft Store:** An Akki Image Tools update has been submitted to the [Microsoft Store](https://apps.microsoft.com/detail/9n6nd0x0kl29). Availability of the submitted update depends on Microsoft’s review and publication. The Store manages installation and updates for its edition.
+
 Download **`lu.akki.ImageConverter-win-Setup.exe`** from the [Releases page](https://github.com/nunolu/akki-image-tools/releases). The installer includes the required runtimes, adds Desktop and Start-menu shortcuts, and provides an uninstaller. No separate codec installation is needed.
 
 A portable ZIP is available on the same release page. Extract it completely and run `Akki.ImageConverter.exe`; installed-app updates are not available in portable mode. The installer is currently unsigned.

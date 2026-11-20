@@ -20,4 +20,4 @@ Opening the website or support links launches a separate browser or app. Those w
 
 ## Contact
 
-For questions about the app or this policy, visit [akki.lu](https://akki.lu) or [open an issue in the project repository](https://github.com/nunolu/akki-image-converter/issues). Do not include private images or personal information in a public issue.
+For questions about the app or this policy, visit [akki.lu](https://akki.lu) or [open an issue in the project repository](https://github.com/nunolu/akki-image-tools/issues). Do not include private images or personal information in a public issue.
